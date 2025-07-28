@@ -36,7 +36,6 @@ class MakeServiceCommand extends Command
         }
 
         File::ensureDirectoryExists(app_path('Services'));
-
         File::put($path, $this->getStub($serviceName));
 
         $this->info("Service {$serviceName} created successfully.");

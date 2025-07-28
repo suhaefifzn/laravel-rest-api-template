@@ -36,7 +36,6 @@ class MakeDTOCommand extends Command
         }
 
         File::ensureDirectoryExists(app_path('DTOs'));
-
         File::put($path, $this->getStub($dtoName));
 
         $this->info("DTO {$dtoName} created successfully.");

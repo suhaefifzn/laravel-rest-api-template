@@ -15,24 +15,16 @@ class AuthController extends Controller
     public function login(LoginRequest $request)
     {
         $data = LoginData::fromRequest($request);
-        $response = $this->authService->login($data);
-
-        if (! $response['success']) {
-            return $this->failedResponseJSON($response['message'], $response['status']);
-        }
-
-        return $this->successfulResponseJSON(null, $response['data'], $response['status']);
+        return $this->authService->login($data);
     }
 
     public function logout()
     {
-        $this->authService->logout();
-        return $this->successfulResponseJSON('The access token has been successfully invalidated');
+        return $this->authService->logout();
     }
 
     public function check()
     {
-        $data = $this->authService->check();
-        return $this->successfulResponseJSON(null, $data);
+        return $this->authService->check();
     }
 }

@@ -5,7 +5,7 @@ namespace App\DTOs;
 class LoginData
 {
     public function __construct(
-        public string $email,
+        public string $username,
         public string $password,
         public string $ip
     ) {}
@@ -13,7 +13,7 @@ class LoginData
     public static function fromRequest($request): self
     {
         return new self(
-            email: $request->input('email'),
+            username: $request->input('username'),
             password: $request->input('password'),
             ip: $request->ip()
         );

@@ -2,7 +2,6 @@
 
 namespace App\Exceptions;
 
-use Exception;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Database\QueryException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -13,10 +12,26 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
+use Illuminate\Http\Exceptions\ThrottleRequestsException;
+
 class CustomErrorHandler
 {
-    public static function handler(Exception $e, bool $isToken = false): JsonResponse
+    public static function handler(\Throwable $e, bool $isToken = false): JsonResponse
     {
+        if ($e instanceof NotFoundHttpException) {
+            return self::setErrorResponse('Not Found', 'Route not found', 404);
+        }
+
+        if ($e instanceof MethodNotAllowedHttpException) {
+            return self::setErrorResponse('Method Not Allowed', 'HTTP method is not allowed for this route', 405);
+        }
+
+        if ($e instanceof ThrottleRequestsException) {
+            return self::setErrorResponse('Too Many Requests', $e->getMessage(), 429);
+        }
+
         if ($e instanceof ValidationException) {
             return self::handleValidationException($e);
         }
@@ -93,7 +108,7 @@ class CustomErrorHandler
         return self::setErrorResponse('HTTP', $e->getMessage(), $e->getStatusCode());
     }
 
-    private static function handleGenericException(Exception $e, bool $isToken): JsonResponse
+    private static function handleGenericException(\Throwable $e, bool $isToken): JsonResponse
     {
         if ($isToken) {
             return self::setErrorResponse('Token', 'Access denied. Token not found', 401);
